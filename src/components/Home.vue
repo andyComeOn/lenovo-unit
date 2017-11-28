@@ -11,19 +11,58 @@
 		<section class="section">
 			<!-- 左侧的菜单 -->
 			<aside class="aside">
-				<AsideLf></AsideLf>
+				<!-- <AsideLf></AsideLf> -->
+				<div>
+					<el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+						<el-radio-button :label="false">展开</el-radio-button>
+						<el-radio-button :label="true">收起</el-radio-button>
+					</el-radio-group>
+					<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+						<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
+							<el-submenu :index="index+''" v-if="!item.leaf">
+								<template slot="title">
+									<i :class="item.iconCls"></i>
+									<span slot="title">{{item.name}}</span>
+								</template>
+
+								<el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">
+									{{child.name}}
+								</el-menu-item>
+							</el-submenu>
+
+							<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path">
+								<i :class="item.iconCls"></i>
+								<span slot="title">{{item.children[0].name}}</span>
+							</el-menu-item>
+						</template> 
+					</el-menu>
+				</div>
+
 			</aside>
 			<!-- 右侧的内容 -->
-			<main class="main">main</main>  
+			<main class="main">
+				<!-- <Mains></Mains> -->
+				<div class="grid-content bg-purple-light">
+					<el-col :span="24" class="breadcrumb-container">
+						<strong class="title">{{$route.name}} </strong>
+						<el-breadcrumb separator="/" class="breadcrumb-inner">
+							<el-breadcrumb-item v-for="(item,index) in $route.matched" :key="item.path">
+								{{ item.name }}
+							</el-breadcrumb-item>
+						</el-breadcrumb>
+					</el-col>
+					<el-col :span="24" class="content-wrapper">
+						<transition name="fade" mode="out-in">
+							<router-view></router-view>
+						</transition>
+					</el-col>
+    			</div>
+			</main>  
 		</section>
 
 	</div>
 
 	
-
-
-		
-    
 </template>
 
 
@@ -33,13 +72,15 @@
 	import HeaderMid from "./header/HeaderMid";
 	import HeaderRg from "./header/HeaderRg";
 	import AsideLf from "./aside/AsideLf";
+	import Mains from "./main/Mains";
 	
     export default{
         name: 'home',
 		components:{
 			HeaderMid,
 			HeaderRg,
-			AsideLf
+			AsideLf,
+			Mains
 			
 		},
 		data(){
@@ -96,15 +137,13 @@
 	.aside{
 		width: 200px;
 		height: 100%;
-		background-color:#f6f7fb;
+		background-color:#fff;
 	}
 
 	.aside-ul{
 		width:100%; 
 		height:100%;
 	}
-
-
 
 
 	.main{
