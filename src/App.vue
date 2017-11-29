@@ -81,7 +81,6 @@ aside {
   padding: 0px;
   box-sizing: border-box;
 }
-
 li {
   list-style: none;
 }
@@ -94,17 +93,18 @@ img {
   display: table;
   clear: both;
 }
-
-#app {
-	font-family: "Avenir", Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	/* position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0; */
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
 }
 
-
+#app {
+	/* font-family: "Avenir", Helvetica, Arial, sans-serif; */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 14px;
+	font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;    
+}
 </style>
