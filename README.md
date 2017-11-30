@@ -1,4 +1,4 @@
-# lenovo-unit
+# lenovo-unit.
 
 > A Vue.js project.
  
