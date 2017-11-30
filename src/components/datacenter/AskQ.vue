@@ -6,13 +6,9 @@
                 <span class="look-up-link">+ 新建问答对</span>
             </div>
             <ul class="lf-items">
-                <li v-for="item in qLists" >
+                <li v-for="(item,index) in askQPairsList" >
+                    <!-- v-if="index=='0' -->
                     {{item}}
-                    
-                    <!-- <i class="el-icon-circle-close el-icon--right"></i> -->
-                    <!-- <i class="el-icon-circle-close"></i> -->
-                    <!-- <el-button size="medium" type="primary" ></el-button> -->
-                    
                     
                     <el-button size="mini" round class="ay-mini-round" icon="el-icon-circle-close"></el-button>
                 </li>
@@ -31,7 +27,6 @@
                         <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
                         <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
                         <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
-                        
                         <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
                         <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
                     </div>
@@ -56,6 +51,9 @@
 
 <script>
 
+import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '@/api/api';
+//import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '@/api/index';
+
 export default {
     name:'AskQ',
     components:{
@@ -63,7 +61,7 @@ export default {
     },
     data(){
         return {
-            qLists:[
+            askQPairsList:[
                 '在吗？',
                 '我喜欢你',
                 '今天天气如何？',
@@ -101,10 +99,25 @@ export default {
         }
     },
     methods:{
-
+        //获取问答对
+        askQPairs:function(){
+            let para = {
+                //page: this.page,
+                //name: this.filters.name
+            };
+            this.listLoading = true;
+            //NProgress.start();
+            getUserListPage(para).then((res) => {
+                console.log(res);
+                //this.total = res.data.total;
+                //this.users = res.data.users;
+                //this.listLoading = false;
+                //NProgress.done();
+            });
+        }
     },
     mounted(){
-
+        this.askQPairs();
     }
 }
 </script>
