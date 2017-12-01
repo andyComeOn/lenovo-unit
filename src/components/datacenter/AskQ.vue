@@ -6,14 +6,10 @@
                 <span class="look-up-link">+ 新建问答对</span>
             </div>
             <ul class="lf-items">
-                <li v-for="(item,index) in askQPairsList" >
-                    <!-- v-if="index=='0' -->
-                    {{item}}
-                    
+                <li v-for="(item,index) in askQPairsList" :data-id="item._id" :class="{'curr':index===isSelected}" @click="clickLi(index,item._id)">
+                    {{item.q}}--{{item._id}}
                     <el-button size="mini" round class="ay-mini-round" icon="el-icon-circle-close"></el-button>
                 </li>
-                
-                
             </ul>
 		</el-col>
         <!-- 问答集右 -->
@@ -50,10 +46,7 @@
 </template>
 
 <script>
-
-import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '@/api/api';
-//import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '@/api/index';
-
+import { getAskQPage,getAskQPageDetail } from '@/api/api';
 export default {
     name:'AskQ',
     components:{
@@ -62,63 +55,59 @@ export default {
     data(){
         return {
             askQPairsList:[
-                '在吗？',
-                '我喜欢你',
-                '今天天气如何？',
-                '你什么星座？',
-                '我什么都可以问你对吧？',
-                '你说你智能吗？',
-                'hfjshhfsjhfj ？',
-                '你会唱歌吗？',
-                '你多大了？',
-                '在吗？',
-                '在吗？',
-                '我什么都可以问你对吧？',
-                '你说你智能吗？',
-                '你帅还是我帅？',
-                '你会唱歌吗？',
-                '你多大了？',
-                '你多大了？',
-                '在吗？',
-                '在干吗？'
+                // '在吗？',
+                // '我喜欢你',
+                // '今天天气如何？',
+                // '你什么星座？',
+                // '我什么都可以问你对吧？',
+                // '你说你智能吗？',
+                // 'hfjshhfsjhfj ？',
+                // '你会唱歌吗？',
+                // '你多大了？',
+                // '在吗？',
+                // '在吗？',
+                // '我什么都可以问你对吧？',
+                // '你说你智能吗？'
+                
             ],
-            collapsed:false,
-            sysUserName: '',
-            sysUserAvatar: '',
-            isCollapse: true,
-            form: {
-                name: '',
-                region: '',
-                date1: '',
-                date2: '',
-                delivery: false,
-                type: [],
-                resource: '',
-                desc: ''
-            }
+            isSelected:0,
+            askQPairsListFirstId:0,
+            askQPairsListDetail:{}
+   
         }
+    },
+    mounted(){
+        this.askQPairs();
     },
     methods:{
         //获取问答对
         askQPairs:function(){
             let para = {
-                //page: this.page,
-                //name: this.filters.name
+                
             };
-            this.listLoading = true;
-            //NProgress.start();
-            getUserListPage(para).then((res) => {
-                console.log(res);
-                //this.total = res.data.total;
-                //this.users = res.data.users;
-                //this.listLoading = false;
-                //NProgress.done();
+           
+            getAskQPage(para).then((res) => {
+                this.askQPairsList = res.data.info;
+                console.log(this.askQPairsList[0]._id);
+                //this.askQPairsListFirstId = this.askQPairsList[0]._id;
+                //this.askQPairsDetail(askQPairsListFirstId);
             });
+        },
+        //获取问答对info
+        askQPairsDetail:function(p){
+            let para = {
+                _id:p
+            };
+            getAskQPageDetail(para).then((res)=>{
+                this.askQPairsListDetail = res.data.askQ;
+            })
+        },
+        clickLi:function(para1,para2){
+            this.isSelected = para1;
+            this.askQPairsDetail(para2)
         }
-    },
-    mounted(){
-        this.askQPairs();
     }
+    
 }
 </script>
 
@@ -164,25 +153,26 @@ export default {
         text-overflow: ellipsis;
         
     }
-    .lf-items li .ay-mini-round{
+    .lf-items li .ay-mini-round {
         visibility: hidden;
         position: absolute;
         right:15px;
         top: 9px;
-         padding: 0;
+        padding: 0;
     }
    
     
     .lf-items li i{
         font-size: 16px;
-        
     }
     .lf-items li:hover {
         background: #D1DBE5;
     }
+    .lf-items li.curr {
+        background:#409EFF;
+    }
     .lf-items li:hover .ay-mini-round{
         visibility: visible;
-        
     }
     .askq-rg{
         height: 100%;
