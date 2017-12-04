@@ -3,7 +3,7 @@
         <!-- 问答集左 -->
         <el-col class="askq-lf" :span="10">
             <div class="lf-title">
-                <span class="look-up-link">+ 新建问答对</span>
+                <span class="look-up-link">+ 新建问答对！</span>
             </div>
             <ul class="lf-items">
                 <li v-for="(item,index) in askQPairsList" :data-id="item._id" :class="{'curr':index===isSelected}" @click="clickLi(index,item._id)">
