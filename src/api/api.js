@@ -6,8 +6,8 @@ export const requestLogin = params => { return axios.post(`${base}/login`, param
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 
-export const getAskQPage = params => { return axios.get('http://bird.ioliu.cn/v1/?url=http://rap2api.taobao.org/app/mock/1019/GET/getAskAnsList', { params: params }); };
-
+export const getAskQPage = params => { return axios.get('http://10.116.19.131/robot/questions.do', { params: params }); };
+// http://bird.ioliu.cn/v1/?url=
 // export const getAskQPage = params => { return axios.get('http://localhost:9998/data2.json', { params: params }) };
 
 
