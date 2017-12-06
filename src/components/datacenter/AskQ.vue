@@ -6,8 +6,8 @@
                 <span class="look-up-link">+ 新建问答对！</span>
             </div>
             <ul class="lf-items">
-                <li v-for="(item,index) in askQPairsList" :data-id="item._id" :class="{'curr':index===isSelected}" @click="clickLi(index,item._id)">
-                    {{item.q}}--{{item._id}}
+                <li v-for="(item,index) in askQPairsList" :class="{'curr':index===isSelected}" @click="clickLi(index,item.questionId)">
+                    {{item.questionContent}}
                     <el-button size="mini" round class="ay-mini-round" icon="el-icon-circle-close"></el-button>
                 </li>
             </ul>
@@ -20,11 +20,12 @@
                         问
                     </span>
                     <div class="rg-ask-items">
-                        <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
-                        <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
-                        <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
-                        <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
-                        <li class="rg-ask-item same-item">我什么都可以问你对吧？</li>
+                        <li class="same-item ells" v-for="(item,index) in askQPairsListDetailQuestions">
+                            <span>{{item.questionContent}}</span>
+                        </li>
+                        <li class="add-ask add-qa-same-color same-item">
+                            <span @click="addQuesCtrl(askQPairsListDetailQuestions[0].questionId)">+添加问题</span>
+                        </li>
                     </div>
                 </div>
                 <div class="rg-answer">
@@ -32,21 +33,46 @@
                         答
                     </span>
                     <div class="rg-answer-items">
-                        <li class="rg-answer-item same-item">你说你智能吗？</li>
-                        <li class="rg-answer-item same-item">你说你智能吗？</li>
-                        <li class="rg-answer-item same-item">你说你智能吗？</li>
-                        <li class="rg-answer-item same-item">你说你智能吗？</li>
-                        <li class="rg-answer-item same-item">你说你智能吗？</li>
+                        <li class="same-item ells" v-for="(item,index) in askQPairsListDetailAnswers">
+                            <span>{{item.answerContent}}</span> 
+                        </li>
+                        <li class="add-answer add-qa-same-color same-item">
+                            <span @click="addAnswerCtrl(1)">+添加答案</span>  
+                        </li>
                     </div>
-                </div>
-                
+                </div>  
             </ul>
 		</el-col>
+        <!--添加问题-->
+		<el-dialog title="添加问题" :visible.sync="addQuesDialogVisible">
+            <el-form :model="formQues" ref="formQues"> 
+                <el-form-item class="add-ques-el-form-item">
+                    <el-input type="textarea" v-model="formQues.desc"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addQuesDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addQuesSubmit" :loading="addQuesSubmitLoading">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <!--添加答案-->
+		<!-- <el-dialog title="添加答案" :visible.sync="addAnsDialogVisible">
+            <el-form :model="formAns">
+                <el-form-item class="add-ques-el-form-item">
+                    <el-input type="textarea" v-model="formAns.desc"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addAnsDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addAnsDialogVisible = false">确 定</el-button>
+            </div>
+        </el-dialog> -->
     </div>
 </template>
 
 <script>
-import { getAskQPage,getAskQPageDetail } from '@/api/api';
+import { getQuestion,getAskQPageDetail,getQaDetail,getSaveQuestion } from '@/api/api';
 export default {
     name:'AskQ',
     components:{
@@ -54,26 +80,38 @@ export default {
     },
     data(){
         return {
-            askQPairsList:[
-                // '在吗？',
-                // '我喜欢你',
-                // '今天天气如何？',
-                // '你什么星座？',
-                // '我什么都可以问你对吧？',
-                // '你说你智能吗？',
-                // 'hfjshhfsjhfj ？',
-                // '你会唱歌吗？',
-                // '你多大了？',
-                // '在吗？',
-                // '在吗？',
-                // '我什么都可以问你对吧？',
-                // '你说你智能吗？'
-                
-            ],
-            isSelected:0,
-            askQPairsListFirstId:0,
-            askQPairsListDetail:{}
-   
+            
+            askQPairsList:[],//问答对
+            isSelected:0,  //被选中
+            
+            askQPairsListDetailQuestions:[], //问题集
+            askQPairsListDetailAnswers:[],   //答案集
+            // questionId:0,
+
+
+            addQuesDialogVisible: false, //添加问题dialog开关
+            addQuesSubmitLoading:false,   //添加问题loading
+
+            addAnsDialogVisible:false,   //添加答案dialog开关
+            addAnsSubmitLoading:false,   //添加问题loading
+            
+           
+
+            dialogFormVisible:false,
+            formQues: {
+                desc: ''
+            },
+            formAns: {
+                name: '',
+                region: '',
+                date1: '',
+                date2: '',
+                delivery: false,
+                type: [],
+                resource: '',
+                desc: ''
+            },
+            formLabelWidth: '120px'
         }
     },
     mounted(){
@@ -82,30 +120,74 @@ export default {
     methods:{
         //获取问答对
         askQPairs:function(){
-            let para = {
-                
-            };
-           
-            getAskQPage(para).then((res) => {
-                this.askQPairsList = res.data.info;
-                console.log(this.askQPairsList[0]._id);
-                //this.askQPairsListFirstId = this.askQPairsList[0]._id;
-                //this.askQPairsDetail(askQPairsListFirstId);
+            let para = {};
+            getQuestion(para).then((res) => {
+                //console.log(res.data);
+                this.askQPairsList = res.data;
+                //console.log(res.data[0].id);
+                this.askQPairsDetail(res.data[0].questionId);
             });
         },
-        //获取问答对info
-        askQPairsDetail:function(p){
+        //获取问答对详情
+        askQPairsDetail:function(qid){
             let para = {
-                _id:p
+                "questionId":qid
             };
-            getAskQPageDetail(para).then((res)=>{
-                this.askQPairsListDetail = res.data.askQ;
+            getQaDetail(para).then((res)=>{
+                this.askQPairsListDetailQuestions = res.data.questions;
+                this.askQPairsListDetailAnswers = res.data.answers;
             })
         },
-        clickLi:function(para1,para2){
-            this.isSelected = para1;
-            this.askQPairsDetail(para2)
-        }
+        //问答对-列表点击
+        clickLi:function(index,qid){
+            console.log(index+'---'+qid);
+            this.isSelected = index;
+            this.askQPairsDetail(qid);
+            //this.questionId = questionId;
+        },
+        //添加问题控制
+        addQuesCtrl:function(qid){
+            //console.log(qid);
+            this.addQuesDialogVisible = true;
+            this.addQuesSubmit(qid);
+            //this.formQues = Object.assign({}, questionId);
+            //console.log(Object.assign({}, questionId));
+            
+        },
+        //添加问题提交
+        addQuesSubmit:function(id){
+            this.addQuesSubmitLoading = true;
+            if(this.formQues.desc.trim()){
+                let para = {
+                    "questionContent":this.formQues.desc,
+                    "questionId":id
+                };
+                console.log(para);
+                getSaveQuestion(para).then((res)=>{
+                    this.addQuesSubmitLoading = false;
+                    console.log(res.data);
+                    //this.askQPairsListDetailQuestions = this.askQPairsListDetailQuestions.concat(res.data.msg);
+
+                })
+            }else{
+                alert(11); 
+            }
+                    
+                    
+                    
+               
+        },
+
+        //添加答案控制
+        addAnswerCtrl:function(questionId){
+            this.addAnsDialogVisible = true;
+        },
+        //添加答案提交
+        addAnswerSubmit:function(){
+
+        },
+
+
     }
     
 }
@@ -178,20 +260,20 @@ export default {
         height: 100%;
     }
     .rg-items{
-        min-height: 100%;
+        width: 100%;
         padding: 20px 20px 0;
         height: 100%;
         overflow: auto;
     }
-    .rg-item{
-        
-    }
+    
     .rg-ask{
+        width: 100%;
         padding-left: 32px;
         margin-bottom: 30px;
         position: relative;
     }
     .rg-answer{
+        width: 100%;
         padding-left: 32px;
         position: relative;
     }
@@ -203,12 +285,32 @@ export default {
         font-size: 14px;
     }
     .rg-items .same-item{
-        line-height:25px;
+        width: 100%;
+        height:25px;
         font-size: 12px;
         cursor: default;
         color: #333;
         margin-bottom: 10px;
     }
+    .rg-items .same-item span{
+        display: inline-block;
+        height:25px;
+        line-height:25px;
+        cursor: pointer;
+    }
+    
+    
+
+    /* 点击添加问题-字体 */
+    .rg-items .add-qa-same-color{
+        color:#409EFF;
+    }
+    
+    /* 重置el-form-item下的mrt */
+    .add-ques-el-form-item{
+        margin-bottom: 5px;
+    }
+    
 </style>
 
 

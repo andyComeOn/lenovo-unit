@@ -99,7 +99,12 @@ img {
 .fr{
 	float: right;
 }
+.ells{
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 
+}
 #app {
 	/* font-family: "Avenir", Helvetica, Arial, sans-serif; */
 	-webkit-font-smoothing: antialiased;

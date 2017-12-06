@@ -2,7 +2,7 @@
     <el-col :span="4" class="userinfo">
         <el-dropdown trigger="hover">
             <span class="el-dropdown-link userinfo-inner">
-                <!-- <img :src="this.sysUserAvatar" /> {{sysUserName}} -->
+                {{userITcode}},你好
             </span>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>我的消息</el-dropdown-item>
@@ -14,7 +14,17 @@
 </template> 
 
 <script>
-    
+    export default{
+        name:'HeaderRg',
+        data(){
+            return{
+                sysName:'LENOVO',
+				
+				userITcode: 'lenovo28'
+				
+            }
+        }
+    }
 </script>
 
 
@@ -22,5 +32,14 @@
     .userinfo{
         height: 60px;
         float: right;
+    }
+    .el-dropdown{
+        height: 60px;
+        line-height: 60px;
+        /* text-align: right; */
+        float: right;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 15px;
     }
 </style>

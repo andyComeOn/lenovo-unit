@@ -2,7 +2,7 @@
 	<div class="home">
 		<el-header class="header">
 			<el-col :span="10" class="logo">
-				Header
+				LENOVO
 			</el-col>
 			<HeaderMid></HeaderMid>
 			<HeaderRg></HeaderRg>
@@ -86,11 +86,11 @@
 		},
 		data(){
 			return {
-				sysName:'VUEADMIN',
+				
 				collapsed:false,
 				sysUserName: '',
 				sysUserAvatar: '',
-				isCollapse: true,
+				isCollapse: false,
 				form: {
 					name: '',
 					region: '',

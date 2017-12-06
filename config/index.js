@@ -10,10 +10,26 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // '/api': {
+      //   target: 'http://10.116.19.131',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': ''
+      //   }
+      // },
+      // '/qa': {
+      //   target: 'http://10.116.19.131',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/qa': ''
+      //   }
+      // }
+    },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
+    //host: 'localhost', // can be overwritten by process.env.HOST
+    host: 'mm.lenovouat.com', // can be overwritten by process.env.HOST
     port: 9998, // can be overwritten by process.env.HOST, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
