@@ -6,7 +6,7 @@
                 <span class="look-up-link">+ 新建问答对！</span>
             </div>
             <ul class="lf-items">
-                <li v-for="(item,index) in askQPairsList" :class="{'curr':index===isSelected}" @click="clickLi(index,item.questionId)">
+                <li v-for="(item,index) in QaPairsList" :class="{'curr':index===isSelected}" @click="clickLi(index,item.questionId)">
                     {{item.questionContent}}
                     <el-button size="mini" round class="ay-mini-round" icon="el-icon-circle-close"></el-button>
                 </li>
@@ -20,11 +20,11 @@
                         问
                     </span>
                     <div class="rg-ask-items">
-                        <li class="same-item ells" v-for="(item,index) in askQPairsListDetailQuestions">
+                        <li class="same-item ells" v-for="(item,index) in QaPairsQuDetailList">
                             <span>{{item.questionContent}}</span>
                         </li>
                         <li class="add-ask add-qa-same-color same-item">
-                            <span @click="addQuesCtrl(askQPairsListDetailQuestions[0].questionId)">+添加问题</span>
+                            <span @click="addQuesCtrl(QaPairsQuDetailList[0].questionId)">+添加问题</span>
                         </li>
                     </div>
                 </div>
@@ -33,18 +33,18 @@
                         答
                     </span>
                     <div class="rg-answer-items">
-                        <li class="same-item ells" v-for="(item,index) in askQPairsListDetailAnswers">
+                        <li class="same-item ells" v-for="(item,index) in QaPairsAnsDetailList">
                             <span>{{item.answerContent}}</span> 
                         </li>
                         <li class="add-answer add-qa-same-color same-item">
-                            <span @click="addAnswerCtrl(1)">+添加答案</span>  
+                            <span @click="addAnswerCtrl()">+添加答案</span>  
                         </li>
                     </div>
                 </div>  
             </ul>
 		</el-col>
         <!--添加问题-->
-		<el-dialog title="添加问题" :visible.sync="addQuesDialogVisible">
+		<!-- <el-dialog title="添加问题" :visible.sync="addQuesDialogVisible">
             <el-form :model="formQues" ref="formQues"> 
                 <el-form-item class="add-ques-el-form-item">
                     <el-input type="textarea" v-model="formQues.desc"></el-input>
@@ -54,7 +54,7 @@
                 <el-button @click="addQuesDialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addQuesSubmit" :loading="addQuesSubmitLoading">确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
 
         <!--添加答案-->
 		<!-- <el-dialog title="添加答案" :visible.sync="addAnsDialogVisible">
@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import { getQuestion,getAskQPageDetail,getQaDetail,getSaveQuestion } from '@/api/api';
+import { getQu,getQuDetail,getSaveQu } from '@/api/api';
+
 export default {
     name:'AskQ',
     components:{
@@ -81,21 +82,21 @@ export default {
     data(){
         return {
             
-            askQPairsList:[],//问答对
+            QaPairsList:[],//问答对
             isSelected:0,  //被选中
             
-            askQPairsListDetailQuestions:[], //问题集
-            askQPairsListDetailAnswers:[],   //答案集
-            // questionId:0,
+            QaPairsQuDetailList:[], //问题集
+            QaPairsAnsDetailList:[],   //答案集
+            
 
 
-            addQuesDialogVisible: false, //添加问题dialog开关
+            addQuesDialogVisible: false,  //添加问题dialog开关
             addQuesSubmitLoading:false,   //添加问题loading
 
             addAnsDialogVisible:false,   //添加答案dialog开关
             addAnsSubmitLoading:false,   //添加问题loading
             
-           
+
 
             dialogFormVisible:false,
             formQues: {
@@ -115,44 +116,42 @@ export default {
         }
     },
     mounted(){
-        this.askQPairs();
+        this.QaPairs();
     },
     methods:{
         //获取问答对
-        askQPairs:function(){
+        QaPairs:function(){
             let para = {};
-            getQuestion(para).then((res) => {
+            getQu(para).then((res) => {
                 //console.log(res.data);
-                this.askQPairsList = res.data;
+                this.QaPairsList = res.data;
                 //console.log(res.data[0].id);
-                this.askQPairsDetail(res.data[0].questionId);
+                this.QaPairsDetail(res.data[0].questionId);
             });
         },
         //获取问答对详情
-        askQPairsDetail:function(qid){
+        QaPairsDetail:function(qid){
             let para = {
                 "questionId":qid
             };
-            getQaDetail(para).then((res)=>{
-                this.askQPairsListDetailQuestions = res.data.questions;
-                this.askQPairsListDetailAnswers = res.data.answers;
+            getQuDetail(para).then((res)=>{
+                this.QaPairsQuDetailList = res.data.questions;
+                this.QaPairsAnsDetailList = res.data.answers;
             })
         },
         //问答对-列表点击
         clickLi:function(index,qid){
             console.log(index+'---'+qid);
             this.isSelected = index;
-            this.askQPairsDetail(qid);
-            //this.questionId = questionId;
+            this.QaPairsDetail(qid);
+            
         },
         //添加问题控制
         addQuesCtrl:function(qid){
             //console.log(qid);
             this.addQuesDialogVisible = true;
             this.addQuesSubmit(qid);
-            //this.formQues = Object.assign({}, questionId);
-            //console.log(Object.assign({}, questionId));
-            
+           
         },
         //添加问题提交
         addQuesSubmit:function(id){
@@ -163,11 +162,10 @@ export default {
                     "questionId":id
                 };
                 console.log(para);
-                getSaveQuestion(para).then((res)=>{
+                getSaveQu(para).then((res)=>{
                     this.addQuesSubmitLoading = false;
                     console.log(res.data);
-                    //this.askQPairsListDetailQuestions = this.askQPairsListDetailQuestions.concat(res.data.msg);
-
+                    //this.QaPairsQuDetailList = this.QaPairsQuDetailList.concat(res.data.msg);
                 })
             }else{
                 alert(11); 
